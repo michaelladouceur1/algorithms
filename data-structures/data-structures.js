@@ -8,17 +8,23 @@ class TriangleMesh {
   addNode(x, y, z) {
     const index = this.nodes.size + 1;
     this.nodes.set(index, [x, y, z]);
-    // this._checkTriangles()
+    this._generateTriangles();
   }
 
-  _checkTriangles() {
+  _generateTriangles() {
     if (this.nodes.size > 3) {
-      const triVals = Array.from(this.triangles.values());
-      const triValsPower = triVals.map((tri) => {
-        return Math.pow(tri[0] * tri[1], tri[2]);
-      });
-      console.log(triValsPower);
+      const nodeKeys = Array.from(this.nodes.keys());
+      this._choose(nodeKeys, 3).forEach((tri, idx) =>
+        this.triangles.set(idx, tri)
+      );
     }
+  }
+
+  _choose(arr, k, prefix = []) {
+    if (k == 0) return [prefix];
+    return arr.flatMap((v, i) =>
+      this._choose(arr.slice(i + 1), k - 1, [...prefix, v])
+    );
   }
 
   _addTriangle(n1, n2, n3) {
@@ -33,11 +39,21 @@ class TriangleMesh {
 
 const mesh = new TriangleMesh();
 
+// mesh.addNode(0, 0, 0);
+// mesh.addNode(1, 0, 0);
+// mesh.addNode(0, 1, 0);
+// mesh.addNode(0, 0, 1);
+// mesh.addNode(-1, 0, 0);
+// mesh.addNode(0, 1, 1);
+// mesh.addNode(0, 1, 1);
+// mesh.addNode(1, 1, 1);
+// mesh.addNode(-1, 1, 1);
 mesh.addNode(0, 0, 0);
 mesh.addNode(1, 0, 0);
+mesh.addNode(-1, 0, 0);
+mesh.addNode(1, 1, 0);
+mesh.addNode(-1, 1, 0);
 mesh.addNode(0, 1, 0);
-mesh.addNode(0, 0, 1);
-mesh._addTriangle(1, 2, 3);
-mesh._addTriangle(1, 2, 4);
 mesh.printNodes();
-mesh._checkTriangles();
+console.log(mesh.triangles);
+console.log(mesh.triangles.size);
